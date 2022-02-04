@@ -21,24 +21,6 @@
     </div>
     <div class="app-sidebar-content">
         <div class="app-sidebar-header-text">
-            Cider
-        </div>
-        <sidebar-library-item :name="$root.getLz('home.title')" svg-icon="./assets/feather/home.svg"
-                              page="home">
-        </sidebar-library-item>
-        <div class="app-sidebar-header-text">
-            {{$root.getLz('term.appleMusic')}}
-        </div>
-        <sidebar-library-item :name="$root.getLz('term.listenNow')"
-                              svg-icon="./assets/feather/play-circle.svg"
-                              page="listen_now"></sidebar-library-item>
-        <sidebar-library-item :name="$root.getLz('term.browse')" svg-icon="./assets/feather/globe.svg"
-                              page="browse">
-        </sidebar-library-item>
-        <sidebar-library-item :name="$root.getLz('term.radio')" svg-icon="./assets/feather/radio.svg"
-                              page="radio">
-        </sidebar-library-item>
-        <div class="app-sidebar-header-text">
             {{$root.getLz('term.library')}}
         </div>
         <sidebar-library-item :name="$root.getLz('term.recentlyAdded')"
@@ -121,49 +103,6 @@
             </div>
         </div>
     </transition>
-    <div class="app-sidebar-footer display--small">
-
-        <div class="app-playback-controls " v-if="mkReady()"
-             @contextmenu="nowPlayingContextMenu">
-            <div class="control-buttons">
-                <div class="app-chrome-item">
-                    <button class="playback-button--small shuffle" v-if="mk.shuffleMode == 0"
-                            @click="mk.shuffleMode = 1"></button>
-                    <button class="playback-button--small shuffle active" v-else
-                            @click="mk.shuffleMode = 0"></button>
-                </div>
-                <div class="app-chrome-item">
-                    <button class="playback-button previous" @click="prevButton()"></button>
-                </div>
-                <div class="app-chrome-item">
-                    <button class="playback-button pause" @click="mk.pause()"
-                            v-if="mk.isPlaying"></button>
-                    <button class="playback-button play" @click="mk.play()" v-else></button>
-                </div>
-                <div class="app-chrome-item">
-                    <button class="playback-button next" @click="mk.skipToNextItem()"></button>
-                </div>
-                <div class="app-chrome-item">
-                    <button class="playback-button--small repeat" v-if="mk.repeatMode == 0"
-                            @click="mk.repeatMode = 1"></button>
-                    <button class="playback-button--small repeat repeatOne" @click="mk.repeatMode = 2"
-                            v-else-if="mk.repeatMode == 1"></button>
-                    <button class="playback-button--small repeat active"
-                            @click="mk.repeatMode = 0" v-else-if="mk.repeatMode == 2"></button>
-                </div>
-            </div>
-            <div class="app-chrome-item volume">
-                <div class="input-container">
-                    <button class="volume-button--small volume" @click="muteButtonPressed()"
-                            :class="{'active': this.cfg.audio.volume == 0}"></button>
-                    <input type="range" class="" @wheel="volumeWheel" step="0.01" min="0"
-                           :max="cfg.audio.maxVolume"
-                           v-model="mk.volume" v-if="typeof mk.volume != 'undefined'"
-                           @change="checkMuteChange()">
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="app-sidebar-notification backgroundNotification"
          v-if="library.backgroundNotification.show">
         <div class="message">{{ library.backgroundNotification.message }} ({{
