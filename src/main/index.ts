@@ -1,7 +1,8 @@
 require("v8-compile-cache");
 
 import {join} from "path";
-import {app} from "electron"
+import {app,Notification} from "electron"
+import {utils} from "./base/utils";
 if (!app.isPackaged) {
     app.setPath("userData", join(app.getPath("appData"), "Cider"));
 }
@@ -74,6 +75,24 @@ ipcMain.on("playbackStateDidChange", (_event, attributes) => {
 
 ipcMain.on("nowPlayingItemDidChange", (_event, attributes) => {
     CiderPlug.callPlugins("onNowPlayingItemDidChange", attributes);
+    if (attributes.name && attributes.artwork.url && attributes.artistName && attributes.albumName) {
+        new Notification({
+            toastXml: `
+                <toast>
+                        <visual>
+                            <binding template="ToastGeneric">
+                            <text id="1">${attributes.name}</text>
+                            <text id="2">${attributes.artistName} - ${attributes.albumName}</text>
+                            </binding>
+                        </visual>
+                    <actions>
+                        <action content="Pause" activationType="protocol" arguments="Pause" />
+                        <action content="Next" activationType="protocol" arguments="Next" />
+                    </actions>
+                </toast>
+                `,
+        }).show();
+    }
 });
 
 app.on("before-quit", () => {
