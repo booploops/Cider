@@ -169,12 +169,10 @@ export class AppEvents {
             }
         }
         else if (arg.includes('playpause')) {
-            console.log('playpause')
             //language=JS
             utils.getWindow().webContents.executeJavaScript('MusicKitInterop.playPause()')
         }
         else if (arg.includes('nextitem')) {
-            console.log("nextitem")
             //language=JS
             utils.getWindow().webContents.executeJavaScript('app.mk.skipToNextItem()')
         }

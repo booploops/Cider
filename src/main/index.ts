@@ -1,8 +1,9 @@
 require("v8-compile-cache");
 
 import {join} from "path";
-import {app,Notification} from "electron"
+import {app, Notification} from "electron"
 import {utils} from "./base/utils";
+
 if (!app.isPackaged) {
     app.setPath("userData", join(app.getPath("appData"), "Cider"));
 }
@@ -76,24 +77,41 @@ ipcMain.on("playbackStateDidChange", (_event, attributes) => {
 ipcMain.on("nowPlayingItemDidChange", (_event, attributes) => {
     console.log("[Cider] Now Playing Item Changed:", attributes);
     CiderPlug.callPlugins("onNowPlayingItemDidChange", attributes);
-    if (attributes?.name && attributes?.artwork?.url && attributes?.artistName && attributes?.albumName) {
-        new Notification({
+    if (
+        attributes?.name && attributes?.artistName && attributes?.albumName
+    ) {
+        let artworkUrl = attributes?.artwork?.url ?? '';
+        if (artworkUrl !== '') {
+            artworkUrl = artworkUrl.replace("{f}", ".jpg")
+                .replace("{w}", "40")
+                .replace("{h}", "40")
+        }
+        let name = attributes?.name.replace(/&/g, "&amp;")
+        let artistName = attributes?.artistName.replace(/&/g, "&amp;")
+        let albumName = attributes?.albumName.replace(/&/g, "&amp;")
+
+        const notification = new Notification({
             //language=XML
             toastXml: `
                 <toast>
-                        <visual>
-                            <binding template="ToastGeneric">
-                            <text id="1">${attributes?.name ?? ''}</text>
-                            <text id="2">${attributes?.artistName ?? ''} - ${attributes?.albumName ?? ''}</text>
-                            </binding>
-                        </visual>
+                    <visual>
+                        <binding template="ToastGeneric">
+                            <text id="1">${name ?? ''}</text>
+                            <text id="2">${artistName ?? ''} - ${albumName ?? ''}</text>
+                        </binding>
+                    </visual>
                     <actions>
-                        <action content="Play/Pause" activationType="protocol" arguments="cider://playpause/" />
-                        <action content="Next" activationType="protocol" arguments="cider://nextitem/" />
+                        <action content="Play/Pause" activationType="protocol" arguments="cider://playpause/"/>
+                        <action content="Next" activationType="protocol" arguments="cider://nextitem/"/>
                     </actions>
                 </toast>
-                `,
-        }).show();
+            `
+        })
+        notification.show()
+        // timeout after 5 seconds
+        setTimeout(() => {
+            notification.close()
+        }, 5000)
     }
 });
 
