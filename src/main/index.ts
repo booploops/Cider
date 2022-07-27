@@ -74,20 +74,22 @@ ipcMain.on("playbackStateDidChange", (_event, attributes) => {
 });
 
 ipcMain.on("nowPlayingItemDidChange", (_event, attributes) => {
+    console.log("[Cider] Now Playing Item Changed:", attributes);
     CiderPlug.callPlugins("onNowPlayingItemDidChange", attributes);
-    if (attributes.name && attributes.artwork.url && attributes.artistName && attributes.albumName) {
+    if (attributes?.name && attributes?.artwork?.url && attributes?.artistName && attributes?.albumName) {
         new Notification({
+            //language=XML
             toastXml: `
                 <toast>
                         <visual>
                             <binding template="ToastGeneric">
-                            <text id="1">${attributes.name}</text>
-                            <text id="2">${attributes.artistName} - ${attributes.albumName}</text>
+                            <text id="1">${attributes?.name ?? ''}</text>
+                            <text id="2">${attributes?.artistName ?? ''} - ${attributes?.albumName ?? ''}</text>
                             </binding>
                         </visual>
                     <actions>
-                        <action content="Pause" activationType="protocol" arguments="Pause" />
-                        <action content="Next" activationType="protocol" arguments="Next" />
+                        <action content="Play/Pause" activationType="protocol" arguments="cider://playpause/" />
+                        <action content="Next" activationType="protocol" arguments="cider://nextitem/" />
                     </actions>
                 </toast>
                 `,
